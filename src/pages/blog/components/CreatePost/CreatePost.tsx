@@ -1,6 +1,25 @@
+import { useAddPostMutation } from 'pages/blog/blog.service'
+import { Post } from 'pages/types/blog.type'
+import { useState } from 'react'
+
+const initialState: Omit<Post, 'id'> = {
+  title: '',
+  description: '',
+  publishDate: '',
+  featuredImage: '',
+  published: false
+}
 export default function CreatePost() {
+  const [formData, setFormData] = useState<Omit<Post, 'id'>>(initialState)
+  const [addPost, addPostResult] = useAddPostMutation()
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    console.log('formData', formData)
+    await addPost(formData).unwrap()
+    setFormData(initialState)
+  }
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div className='mb-6'>
         <label htmlFor='title' className='mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300'>
           Title
@@ -11,6 +30,8 @@ export default function CreatePost() {
           className='block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500'
           placeholder='Title'
           required
+          value={formData.title}
+          onChange={(event) => setFormData((prev) => ({ ...prev, title: event.target.value }))}
         />
       </div>
       <div className='mb-6'>
@@ -23,6 +44,8 @@ export default function CreatePost() {
           className='block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500'
           placeholder='Url image'
           required
+          value={formData.featuredImage}
+          onChange={(event) => setFormData((prev) => ({ ...prev, featuredImage: event.target.value }))}
         />
       </div>
       <div className='mb-6'>
@@ -36,6 +59,8 @@ export default function CreatePost() {
             className='block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500'
             placeholder='Your description...'
             required
+            value={formData.description}
+            onChange={(event) => setFormData((prev) => ({ ...prev, description: event.target.value }))}
           />
         </div>
       </div>
@@ -49,10 +74,18 @@ export default function CreatePost() {
           className='block w-56 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500'
           placeholder='Title'
           required
+          value={formData.publishDate}
+          onChange={(event) => setFormData((prev) => ({ ...prev, publishDate: event.target.value }))}
         />
       </div>
       <div className='mb-6 flex items-center'>
-        <input id='publish' type='checkbox' className='h-4 w-4 focus:ring-2 focus:ring-blue-500' />
+        <input
+          id='publish'
+          type='checkbox'
+          className='h-4 w-4 focus:ring-2 focus:ring-blue-500'
+          checked={formData.published}
+          onChange={(event) => setFormData((prev) => ({ ...prev, published: event.target.checked }))}
+        />
         <label htmlFor='publish' className='ml-2 text-sm font-medium text-gray-900'>
           Publish
         </label>
