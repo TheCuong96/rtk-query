@@ -1,6 +1,9 @@
 import { useAddPostMutation } from 'pages/blog/blog.service'
+import blogReducer from 'pages/blog/blog.slice'
 import { Post } from 'pages/types/blog.type'
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from 'store'
 
 const initialState: Omit<Post, 'id'> = {
   title: '',
@@ -12,6 +15,10 @@ const initialState: Omit<Post, 'id'> = {
 export default function CreatePost() {
   const [formData, setFormData] = useState<Omit<Post, 'id'>>(initialState)
   const [addPost, addPostResult] = useAddPostMutation()
+  const selectItemEdit = useSelector((state: RootState) => state.blog.postId)
+
+  console.log('selectItemEdit', selectItemEdit)
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     console.log('formData', formData)
