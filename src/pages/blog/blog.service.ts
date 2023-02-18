@@ -81,18 +81,14 @@ export const blogApi = createApi({
       invalidatesTags: (result, error, body) => (error ? [] : [{ type: 'Posts', id: 'LIST' }])
     }),
     getPost: build.query<Post, string>({
-      query: (id) => ({
-        url: `posts/${id}`,
-        headers: {
-          hello: 'Im duoc'
-        },
-        params: {
-          first_name: 'du',
-          'last-name': 'duoc'
-        }
-      })
+      query: (id) => `posts/${id}`
+    }),
+    updatePost: build.mutation<Post, { id: string; body: Post }>({
+      query: (data) => {
+        return { url: `posts/${data.id}`, method: 'PUT', body: data.body }
+      }
     })
   })
 })
 
-export const { useGetPostsQuery, useAddPostMutation } = blogApi
+export const { useGetPostsQuery, useAddPostMutation, useGetPostQuery, useUpdatePostMutation } = blogApi
