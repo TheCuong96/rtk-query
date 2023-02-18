@@ -86,9 +86,17 @@ export const blogApi = createApi({
     updatePost: build.mutation<Post, { id: string; body: Post }>({
       query: (data) => {
         return { url: `posts/${data.id}`, method: 'PUT', body: data.body }
-      }
+      },
+      invalidatesTags: (result, error, data) => [{ type: 'Posts', id: data.id }] //đoạn này để nó dò xem data trả về là như thế nào và nếu trùng với result của providesTags thì gọi lại tất cả data 1 lần nữa là getPosts
+    }),
+    deletePost: build.mutation<Post, string>({
+      query: (id) => {
+        return { url: `posts/${id}`, method: 'DELETE' }
+      },
+      invalidatesTags: (result, error, id) => [{ type: 'Posts', id }]
     })
   })
 })
 
-export const { useGetPostsQuery, useAddPostMutation, useGetPostQuery, useUpdatePostMutation } = blogApi
+export const { useGetPostsQuery, useAddPostMutation, useGetPostQuery, useUpdatePostMutation, useDeletePostMutation } =
+  blogApi

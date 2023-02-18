@@ -1,8 +1,8 @@
 import { useAddPostMutation, useGetPostQuery, useUpdatePostMutation } from 'pages/blog/blog.service'
-import blogReducer from 'pages/blog/blog.slice'
+import blogReducer, { unSelectItemEdit } from 'pages/blog/blog.slice'
 import { Post } from 'pages/types/blog.type'
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from 'store'
 
 const initialState: Omit<Post, 'id'> = {
@@ -14,6 +14,7 @@ const initialState: Omit<Post, 'id'> = {
 }
 export default function CreatePost() {
   const [formData, setFormData] = useState<Omit<Post, 'id'> | Post>(initialState)
+  const dispatch = useDispatch()
   const [addPost, addPostResult] = useAddPostMutation()
   const [updatePost, updatePostResult] = useUpdatePostMutation()
   const selectItemEdit = useSelector((state: RootState) => state.blog.postId)
@@ -37,6 +38,12 @@ export default function CreatePost() {
 
     setFormData(initialState)
   }
+  const handleCancelEdit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    dispatch(unSelectItemEdit())
+    setFormData(initialState)
+  }
+
   return (
     <form onSubmit={handleSubmit}>
       <div className='mb-6'>
@@ -121,8 +128,9 @@ export default function CreatePost() {
               </span>
             </button>
             <button
-              type='reset'
+              // type='reset'
               className='group relative mb-2 mr-2 inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-red-200 via-red-300 to-yellow-200 p-0.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-4 focus:ring-red-100 group-hover:from-red-200 group-hover:via-red-300 group-hover:to-yellow-200 dark:text-white dark:hover:text-gray-900 dark:focus:ring-red-400'
+              onClick={(event) => handleCancelEdit}
             >
               <span className='relative rounded-md bg-white px-5 py-2.5 transition-all duration-75 ease-in group-hover:bg-opacity-0 dark:bg-gray-900'>
                 Cancel
